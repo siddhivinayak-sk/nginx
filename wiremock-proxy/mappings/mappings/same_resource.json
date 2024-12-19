@@ -1,0 +1,12 @@
+{
+    "request": {
+        "urlPathPattern": "/api/same-resource.*"
+    },
+    "response": {
+        "status": 200,
+        "body": "{\n  \"headers\": {\n    {{#each request.headers}}\n      \"{{@key}}\": \"{{this}}\",\n    {{/each}}\n  },\n  \"queryParameters\": {\n    {{#each request.query}}\n      \"{{@key}}\": \"{{this}}\",\n    {{/each}}\n  },\n  \"body\": \"{{{request.body}}}\"\n}",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

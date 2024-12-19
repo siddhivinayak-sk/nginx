@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-rp
+  name: nginx-rp
+spec:
+  ports:
+    - protocol: TCP
+      name: "80"
+      port: 80
+      targetPort: 80
+  selector:
+    app: nginx-rp
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-rp
+  name: nginx-rp
+spec:
+  selector:
+    matchLabels:
+      app: nginx-rp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-rp
+    spec:
+      containers:
+        - name: nginx-rp
+          image: siddhivinayaksk1/nginx-rp:latest
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 80
+          env:
+            - name: TARGET_SERVER
+              value: "httpbin"
+            - name: TARGET_SERVER_PORT
+              value: "80"
+      restartPolicy: Always

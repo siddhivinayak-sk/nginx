@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: wiremock
+  name: wiremock
+spec:
+  selector:
+    app: wiremock
+  type: ClusterIP
+  ports:
+    - name: wiremock
+      port: {{ .Values.wiremock.port }}
+      protocol: TCP
+      targetPort: {{ .Values.wiremock.targetPort }}
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: wiremock
+  labels:
+    app: wiremock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wiremock
+  template:
+    metadata:
+      labels:
+        app: wiremock
+    spec:
+      containers:
+        - name: wiremock
+          image: wiremock/wiremock:3.10.0
+          args:
+            - --global-response-templating
+            - --no-request-journal
+          volumeMounts:
+            - mountPath: /home/wiremock/mappings
+              name: mappings
+            - mountPath: /home/wiremock/__files
+              name: files
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /__admin/mappings
+              port: {{ .Values.wiremock.port }}
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 8
+      volumes:
+        - name: mappings
+          configMap:
+            name: wiremock-mappings
+        - name: files
+          configMap:
+            name: wiremock-files
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: wiremock-mappings
+data:
+  {{ (.Files.Glob "mappings/**").AsConfig | nindent 2 }}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: wiremock-files
+data:
+  {{ (.Files.Glob "files/**").AsConfig | nindent 2 }}

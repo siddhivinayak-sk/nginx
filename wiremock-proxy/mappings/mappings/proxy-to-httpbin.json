@@ -1,0 +1,37 @@
+{
+    "request": {
+        "urlPathPattern": "/proxy/.*"
+    },
+    "response": {
+        "proxyBaseUrl": "http://httpbin",
+        "proxyUrlPrefixToRemove": "/proxy",
+        "additionalProxyRequestHeaders": {
+            "test": "test-value"
+        },
+        "removeProxyRequestHeaders": [
+            "x-forwarded-port",
+            "x-forwarded-host",
+            "X-Forwarded-Proto",
+            "x-forwarded-prefix",
+            "host",
+            "x-forwarded-for",
+            "forwarded",
+            "x-real-ip",
+            "x-forwarded-schema",
+            "x-original-forwarded-for",
+            "x-forwarded-client-cert",
+            "referer",
+            "traceparent",
+            "User-Agent",
+            "x-b3-flags",
+            "x-b3-parentspanid",
+            "x-b3-sampled",
+            "x-b3-spanid",
+            "x-b3-traceid",
+            "x-envoy-attempt-count",
+            "x-forwarded-client-cert",
+            "x-request-id",
+            "x-scheme"
+        ]
+    }
+}
